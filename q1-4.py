@@ -41,7 +41,7 @@ m = Model("mogplex")
 # Déclaration variables de décision
 x = []
 for i in colonnes:
-     # les rk sont réels
+     # les rk sont réels non bornés
     if i in colonnes_rk:
         x.append(m.addVar(vtype=GRB.CONTINUOUS, lb=-GRB.INFINITY, name="r%d" % (i+1)))
     
@@ -54,21 +54,21 @@ for i in colonnes:
         x.append(m.addVar(vtype=GRB.BINARY, name="x%d" % (i+1)))
 
      
-# maj du modèle pour integrer les nouvelles variables
+# MAJ du modèle pour integrer les nouvelles variables
 m.update()
 obj = LinExpr();
 obj = 0
 for j in colonnes:
     obj += c[j] * x[j]
         
-# definition de l'objectif (maximisation de la fonction objectif)
+# Définition de l'objectif (maximisation de la fonction objectif)
 m.setObjective(obj,GRB.MAXIMIZE)
 
-# Definition des contraintes
+# Définition des contraintes
 for i in lignes:
     m.addConstr(quicksum(a[i][j]*x[j] for j in colonnes) <= b[i], "Contrainte%d" % i)
     
-# Resolution
+# Résolution
 m.optimize()
 
 # Affichage des résultats
