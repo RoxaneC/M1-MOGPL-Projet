@@ -20,6 +20,13 @@ z = [325, 225, 210, 115, 75, 50]
 w = [3,2,1]
 w_prime = [1,1,1]
 
+list_names = ['r1','b11','b21','b31',
+              'r2','b21','b22','b32',
+              'r3','b13','b23','b33',
+              'x11','x12','x13','x14','x15','x16',
+              'x21','x22','x23','x24','x25','x26',
+              'x31','x32','x33','x34','x35','x36']
+
 # intervalles de nos variables
 lignes = range(16)
 colonnes = range(18)
@@ -95,11 +102,11 @@ print("")
 print('Solution optimale:')
 for j in colonnes:
     if j in colonnes_rk:
-        print('r%d'%(j+1), '=', x[j].x)
+        print(list_names[j], '=', x[j].x)
     if j in colonnes_bik:
-        print('b%d'%(j+1), '=', x[j].x)
+        print(list_names[j], '=', x[j].x)
     if j in colonnes_x:
-        print('x%d'%(j+1), '=', x[j].x)
+        print(list_names[j], '=', x[j].x)
           
 print("")
 print('Valeur de la fonction objectif :', m.objVal)
