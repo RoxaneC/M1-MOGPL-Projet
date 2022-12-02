@@ -42,10 +42,11 @@ for n in N:
         tps_moy.append(np.mean(tps_N))
         
 
-# Affichage des temps d'execution pour meilleure interprétation
+# Affichage et sauvegarde des temps d'execution pour une meilleure interprétation
 plt.figure()
 plt.title("Temps d'execution selon N")
 plt.xlabel("n (nombre d'agents)")
 plt.ylabel("tps (temps d'éxecution')")
-plt.plot(N, tps_moy)
+plt.plot(N, tps_moy, 'v')
+plt.savefig('/graph/tps_execution_part3.png')
 plt.show()
