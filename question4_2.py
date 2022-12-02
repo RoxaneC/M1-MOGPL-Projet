@@ -1,81 +1,110 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Dec  2 14:58:57 2022
+Created on Thu Dec  1 16:16:41 2022
 
-@author:    21110121
+@author: 21205907
 """
 
 from gurobipy import *
 
-dico_sommets = {'a':1,'b':2,'c':3,'d':4,'e':5,'f':6,'g':7}
+nbcont = 14
+nbvar = 18
 
-# arrêtes avec ( sommet i, sommet j, cout arrete, scénario)
+# Explicitation des variables x :
+# x1 : arc AB
+# x2 : arc AC
+# x3 : arc AD
+# x4 : arc BE
+# x5 : arc BC
+# x6 : arc BD
+# x7 : arc DC
+# x8 : arc DF
+# x9 : arc CE
+# x10 : arc CF
+# x11 : arc EG
+# x12 : arc FG
+list_names = ['x_1', 'x_2', 'x_3', 'x_4', 'x_5','x_6', 'x_7', 'x_8', 'x_9', 'x_10',
+              'x_11', 'x_12', 'x_13', 'x_14', 'x_15','r_16','x_17', 'x_18','b_1,1',
+              'b_2,1','r_2', 'b_2,1', 'b_2,2']
 
-E = [(1,2,5,1),(1,4,2,1),(1,3,10,1),(2,5,4,1),(2,3,4,1),(2,4,1,1),(4,3,1,1),(4,6,3,1),(3,5,3,1),(3,6,1,1),(5,7,1,1),(6,7,1,1),(1,2,3,2),(1,4,6,2),(1,3,4,2),(2,5,6,2),(2,3,2,2),(2,4,3,2),(4,3,4,2),(4,6,5,2),(3,5,1,2),(3,6,2,2),(5,7,1,2),(6,7,1,2)]
-V = [1,2,3,4,5,6,7]
+# Intervalles de nos variables
+lignes = range(nbcont)
+colonnes = range(nbvar)
 
-G = V,E
+# Explicitation des colonnes représentants les variables rk, bik et xi
+colonnes_rk = [12, 15]
+colonnes_bik = [13,14,16,17]
+colonnes_x = [0,1,2,3,4,5,6,7,8,9,10,11]
+# Explicitation des lignes pour les signes des contraintes
+lignes_egal = [0,4,5,6,7,8,9]
+lignes_inf = [1,2,3,10,11]
 
 
-def solve(G):
-    
-    V,E = G
-    
-    m = Model("mogplex")
-    
-    # déclaration des variables de décision
-    x = {}
-    for (i,j,_,s) in E:
-        x[(i,j,s)] = m.addVar(vtype=GRB.BINARY, name = "x%s%s%s"%(i,j,s))
-    
-    c = {}
-    for (i,j,k,s) in E:
-        c[(i,j,s)] = k
-        
-    w = [2,1]    
-            
-        
-    m.update()
-    
-    # définition de l'objectif 
-    
-    obj = LinExpr()
-    obj = 0
-    for (i,j,_,s) in E:
-        obj += ((-c[(i,j,s)]) * x[(i,j,s)])*w[s-1]
-        
-    m.setObjective(obj,GRB.MAXIMIZE)
-    
-    # définition des contraintes
-    
-    for(i,j,_,s) in E :
-        if i != 1 :
-            preds = [(i2,j2,s2) for (i2,j2,c2,s2) in E if(j2==i)]
-            m.addConstr(x[(i,j,s)]<=quicksum([x[ind] for ind in preds]),"Contrainte conservation %s"%(i))
-            
-    for i in V:
-        if i != 1 :
-            preds = [(i2,j2,s2) for (i2,j2,c2,s2) in E if(j2==i)]
-            m.addConstr(quicksum([x[ind] for ind in preds])<=1,"Contrainte unique %s"%(i))
-        
-    preds = [(i2,j2,s2) for (i2,j2,c2,s2) in E if j2==7]
-    m.addConstr(quicksum([x[ind] for ind in preds])==1, "Contrainte atteint sommet g")
-    
-    m.optimize()
-    
-    # Affichage des résultats
-    print("")                
-    print('Solution optimale:')
-    for (i,j,s) in x:
-        print((i,j,s), '=', x[(i,j,s)].x)
-              
-    print("")
-    print('Valeur de la fonction objectif :', m.objVal)
-    
-    if(m.status == GRB.INFEASIBLE):
-        print("pas de chemin plus rapide")
-        
-# chemin le plus robuste dans les deux scénarios:
-        
-solve(G)
+# Matrice des contraintes
+
+a = [[1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], # contraintes sur arcs
+     [0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0],
+     [1,0,0,-1,-1,-1,0,0,0,0,0,0,0,0,0,0,0,0],
+     [0,0,1,0,0,1,-1,0,-1,-1,0,0,0,0,0,0,0,0],
+     [0,1,0,0,1,0,1,0,-1,-1,0,0,0,0,0,0,0,0],
+     [0,0,0,1,0,0,0,0,1,0,-1,0,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,1,0,1,0,-1,0,0,0,0,0,0],
+     [0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0],
+     [5,1,2,4,4,1,1,3,3,1,1,1,1,-1,0,0,0,0], # r1 z1
+     [5,1,2,4,4,1,1,3,3,1,1,1,1,0,-1,0,0,0], # r1 z1
+     [3,3,6,6,2,1,4,5,1,2,1,1,0,0,0,1,-1,0], # r2 Z2
+     [3,3,6,6,2,1,4,5,1,2,1,1,0,0,0,1,0,-1]] # r2 z2
+
+# Second membre
+b = [1,1,1,1,0,0,0,0,0,1,0,0]
+
+# Coefficients de la fonction objective
+c = [0,0,0,0,0,0,0,0,0,0,0,0,1, -1, -1, 2, -1, -1]
+
+# Création de modèle
+m = Model("mogplex")
+
+# Déclaration variables de décision
+x = []
+for i in colonnes:
+    # les rk sont réels non bornés
+    if i in colonnes_rk:
+        x.append(m.addVar(vtype=GRB.CONTINUOUS, lb=-GRB.INFINITY, name="r%d" % (i + 1)))
+
+    # les bik sont supérieurs ou égaux à 0
+    if i in colonnes_bik:
+        x.append(m.addVar(vtype=GRB.CONTINUOUS, lb=0, name="b%d" % (i + 1)))
+
+    # les xi sont binaires (1 ou 0)
+    if i in colonnes_x:
+        x.append(m.addVar(vtype=GRB.BINARY, name="x%d" % (i + 1)))
+# MAJ du modèle pour integrer les nouvelles variables
+m.update()
+obj = LinExpr();
+obj = 0
+for j in colonnes:
+    obj += c[j] * x[j]
+
+# Définition de l'objectif (maximisation de la fonction objectif)
+m.setObjective(obj, GRB.MAXIMIZE)
+
+# Définition des contraintes
+for i in lignes_inf:
+    m.addConstr(quicksum(a[i][j] * x[j] for j in colonnes) <= b[i], "Contrainte%d" % i)
+for i in lignes_egal:
+    m.addConstr(quicksum(a[i][j] * x[j] for j in colonnes) == b[i], "Contrainte%d" % i)
+
+# Résolution
+m.optimize()
+
+# Affichage des résultats
+print("")
+print('Solution optimale:')
+for j in colonnes_x:
+    print(list_names[j], '=', x[j].x)
+
+print("")
+print('Valeur de la fonction objectif :', m.objVal)
