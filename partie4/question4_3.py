@@ -40,16 +40,16 @@ def matrice_contraintes(t1,t2):
          [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-         [1, 0, 0, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         [0, 0, 1, 0, 0, 1, -1, 0, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0],
-         [0, 1, 0, 0, 1, 0, 1, 0, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0, 0],
+         [1, 0, 0,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 1, 0, 0, 1,-1, 0,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 1, 0, 0, 1, 0, 1, 0,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 1, 0, 0, 0, 0, 1, 0,-1, 0, 0, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0,-1, 0, 0, 0, 0, 0, 0],
          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
-         [t1[0], t1[1], t1[2], t1[3], t1[4], t1[5], t1[6], t1[7], t1[8], t1[9], t1[10], t1[11], 1, -1, 0, 0, 0, 0],  # r1 z1
-         [t2[0], t2[1], t2[2], t2[3], t2[4], t2[5], t2[6], t2[7], t2[8], t2[9], t2[10], t2[11], 1, 0, -1, 0, 0, 0],  # r1 z2
-         [t1[0], t1[1], t1[2], t1[3], t1[4], t1[5], t1[6], t1[7], t1[8], t1[9], t1[10], t1[11], 0, 0, 0, 1, -1, 0],  # r2 Z1
-         [t2[0], t2[1], t2[2], t2[3], t2[4], t2[5], t2[6], t2[7], t2[8], t2[9], t2[10], t2[11], 0, 0, 0, 1, 0, -1]]  # r2 z2
+         [t1[0], t1[1], t1[2], t1[3], t1[4], t1[5], t1[6], t1[7], t1[8], t1[9], t1[10], t1[11], 1,-1, 0, 0, 0, 0],  # r1 z1
+         [t2[0], t2[1], t2[2], t2[3], t2[4], t2[5], t2[6], t2[7], t2[8], t2[9], t2[10], t2[11], 1, 0,-1, 0, 0, 0],  # r1 z2
+         [t1[0], t1[1], t1[2], t1[3], t1[4], t1[5], t1[6], t1[7], t1[8], t1[9], t1[10], t1[11], 0, 0, 0, 1,-1, 0],  # r2 Z1
+         [t2[0], t2[1], t2[2], t2[3], t2[4], t2[5], t2[6], t2[7], t2[8], t2[9], t2[10], t2[11], 0, 0, 0, 1, 0,-1]]  # r2 z2
     return a
 
 
@@ -58,7 +58,7 @@ def solve(nbcont,nbvar,nb_scenarios,alpha,t1,t2):
     n = nb_scenarios
     nb = np.zeros(n)
     for i in range(n):
-        nb[i] = i
+        nb[i] = i+1
 
     # Intervalles de nos variables
     lignes = range(nbcont)
@@ -85,7 +85,7 @@ def solve(nbcont,nbvar,nb_scenarios,alpha,t1,t2):
     w_p2 = w_p[1]
 
     # Coefficients de la fonction objective
-    c = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, nb[0]*w_p1, -1, -1, nb[1]*w_p2, -1, -1]
+    c = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, nb[0]*w_p1, -w_p1, -w_p1, nb[1]*w_p2, -w_p2, -w_p2]
 
     # Création de modèle
     m = Model("mogplex")
@@ -133,9 +133,9 @@ def solve(nbcont,nbvar,nb_scenarios,alpha,t1,t2):
     scenario_2 = np.zeros(12)
 
     for i in range(12):
-        for j in range(10,11):
+        for j in range(10,12):
             scenario_1[i] = a[j][i]
-        for j in range(12,13):
+        for j in range(12,14):
             scenario_2[i] = a[j][i]
 
     valeur_chemin = m.objVal
@@ -209,7 +209,7 @@ for alpha in range(1,6):
     plt.title("Impact de la pondération sur la robustesse, alpha %x" %alpha)
     plt.xlabel("scénario 1")
     plt.ylabel("scénario 2")
-    nfile = "graph/pondération_alpha%x" %alpha + ".png"
+    nfile = "./graph/pondération_alpha%x" %alpha + ".png"
     plt.savefig(nfile)
 
 plt.show()
