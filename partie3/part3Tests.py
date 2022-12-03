@@ -52,5 +52,5 @@ for n in N:
     plt.plot(P, tps_N, label="N= %i" %n)
 
 plt.legend()
-plt.savefig('graph/tps_execution_part3.png')
+plt.savefig('./graph/tps_execution_part3.png')
 plt.show()

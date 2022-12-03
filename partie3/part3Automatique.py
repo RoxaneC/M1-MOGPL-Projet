@@ -104,7 +104,7 @@ def resolutionCoutBudget(n,p,U,C,B,w):
     for i in range(p):
         s = "x_" + str(i+1)
         list_names.append(s)
-
+    
     # Affichage des résultats
     print("")                
     print('Solution optimale:')
