@@ -39,9 +39,9 @@ for n in N:
 
 # Affichage et sauvegarde des temps d'execution pour une meilleure interprétation
 plt.figure()
-plt.title("Temps d'execution selon N")
-plt.xlabel("n (nombre d'agents)")
-plt.ylabel("tps (temps d'éxecution')")
+plt.title("Temps d'execution selon N (avec p = 5*N)")
+plt.xlabel("N")
+plt.ylabel("Tps d'éxecution (sec)")
 plt.plot(N, tps_moy, 'r')
 plt.legend()
 plt.savefig('/graph/tps_execution_part2.png')
