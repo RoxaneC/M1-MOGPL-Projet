@@ -68,15 +68,15 @@ def resolutionUtilite(n, p, U, w):
     # Déclaration variables de décision
     x = []
     for i in colonnes:
-         # les rk sont réels non bornés
+         # les r_k sont réels non bornés
         if i in colonnes_rk:
             x.append(m.addVar(vtype=GRB.CONTINUOUS, lb=-GRB.INFINITY, name="r%d" % (i+1)))
         
-        # les bik sont supérieurs ou égaux à 0
+        # les b_ik sont supérieurs ou égaux à 0
         if i in colonnes_bik:
             x.append(m.addVar(vtype=GRB.CONTINUOUS, lb=0, name="b%d" % (i+1)))
               
-        # les xi sont binaires (1 ou 0)
+        # les x_ij sont binaires (1 ou 0)
         if i in colonnes_x:
             x.append(m.addVar(vtype=GRB.BINARY, name="x%d" % (i+1)))
 

@@ -6,7 +6,7 @@ from part2Automatique import resolutionUtilite
 
 
 ## TESTS ET CALCUL DU TEMPS D'ÉXECUTION
-N = [5,10,15,20]
+N = [5,10,12,15]
 
 # stockage des temps moyens pour chaque N
 tps_moy = []
@@ -43,5 +43,6 @@ plt.title("Temps d'execution selon N")
 plt.xlabel("n (nombre d'agents)")
 plt.ylabel("tps (temps d'éxecution')")
 plt.plot(N, tps_moy, 'r')
+plt.legend()
 plt.savefig('/graph/tps_execution_part2.png')
 plt.show()
