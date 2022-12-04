@@ -69,9 +69,10 @@ for j in colonnes:
 m.setObjective(obj,GRB.MAXIMIZE)
 
 # Définition des contraintes
-for i in lignes:
+for i in range(nbcont-1):
     m.addConstr(quicksum(a[i][j]*x[j] for j in colonnes) <= b[i], "Contrainte%d" % i)
-    
+m.addConstr(quicksum(a[-1][j]*x[j] for j in colonnes) == b[-1], "Contrainte%d" % (nbcont-1))
+
 # Résolution
 m.optimize()
 
