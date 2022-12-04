@@ -34,7 +34,7 @@ bsecond = [1, 1, 1, 1, 0, 0, 0, 0, 0, 1]
 
 def temps_trajets_aleatoires():
     t = []
-    for i in range(len(a)):
+    for i in range(12):
         t.append([int((rand.random() * 100) % 20)])
     return t
 
@@ -85,7 +85,7 @@ for alpha in range(1,6):
         for s in range(range_scenarios):
             vari = 0
             for i in range(12):
-                vari += quicksum([cout[s][i]*x[i] for j in range(range_sommets)])
+                vari += quicksum([cout[s][i]*x[i]])
             m.addConstr(z[s] == vari, "définition de z")
         for k in range(range_scenarios) :
             for i in range(range_scenarios) :
