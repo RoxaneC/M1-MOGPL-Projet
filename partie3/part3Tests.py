@@ -20,8 +20,9 @@ for n in N:
     # stocke les temps des 10 instances pour ce n
     tps_N = []
 
-    # valeurs de pondération arbitrairement choisies entre 0 et 2*n
-    w = np.random.randint(2*n, size=n).tolist()
+    # valeurs de pondération arbitrairement choisies entre 1 et n*n (maximum peu probable)
+    # (pour s'assurer une décroissance STRICTE, on fait la somme cumulée des tirages entre 1 et n)
+    w = np.cumsum(np.random.randint(1,n, size=n)).tolist()
     # tri dans l'ordre décroissant du vecteur des pondérations
     w.sort(reverse=True)
 

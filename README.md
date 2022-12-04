@@ -8,11 +8,11 @@ Ce projet a été développé en Python3 et requiert donc un executeur python.
 
 Il utilise divers modules qui sont indispensables à son fonctionnement :
 
-* gurobipy  (résolution de programme linéaire)
-* numpy     (simplification de l'usage des liste)
-* scipy.linalg
-* time
-* matplotlib.pyplot
+* gurobipy              (résolution de programme linéaire)
+* numpy                 (simplification de l'usage des listes)
+* scipy.linalg          (simplification de construction de matrice par blocs)
+* time                  (calcul du temps d'execution)
+* matplotlib.pyplot     (affichage et sauvegarde des graph)
 
 Ces modules peuvent être installé si besoin par la commande `pip install <nom_du_module>`
 

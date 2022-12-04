@@ -28,7 +28,7 @@ def resolutionUtilite(n, p, U, w):
     sm_z = np.kron(np.ones((n,1)), block_diag(*sm_zi))
 
     # sous matrice représentant les contraintes du nombres d'objets affectés
-    sm_x = np.bmat([[np.ones((1,n*p))], [np.kron(np.ones((1,n)), np.eye(p))]])
+    sm_x = np.bmat([[np.kron(np.ones((1,n)), np.eye(p))], [np.ones((1,n*p))]])
 
     # sous matrice pour le remplissage par 0 du reste
     sm_zero = np.zeros((p+1, (n+1)*n))
@@ -39,8 +39,6 @@ def resolutionUtilite(n, p, U, w):
           
     # Récupération des nombre de variables, contraintes, etc
     nbVar = n*(n+1) + p*n       # On a n 'r_k'   +   n*n 'b_ik'   +   n*p 'x_ij'
-    nbCont = len(a)
-    lignes = range(nbCont)
     colonnes = range(nbVar)
             
     # Explicitation des indices des colonnes représentants les variables r_k, b_ik et x_ij
@@ -50,7 +48,7 @@ def resolutionUtilite(n, p, U, w):
     
     
     # Second membre
-    b = np.concatenate( (np.zeros((1,n*n)), p, np.ones((1,p))), axis = None )
+    b = np.concatenate( (np.zeros((1,n*n)), np.ones((1,p)), p), axis = None )
 
     # Coefficients de la fonction objectif
     c = []
@@ -93,8 +91,10 @@ def resolutionUtilite(n, p, U, w):
     m.setObjective(obj,GRB.MAXIMIZE)
 
     # Définition des contraintes
-    for i in lignes:
+    for i in range(len(a)-1):
         m.addConstr(quicksum(a[i][j]*x[j] for j in colonnes) <= b[i], "Contrainte%d" % i)
+    m.addConstr(quicksum(a[-1][j]*x[j] for j in colonnes) == b[-1], "Contrainte%d" % len(a))
+
 
     # Résolution
     m.optimize()
